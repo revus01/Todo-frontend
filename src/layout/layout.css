@@ -1,0 +1,19 @@
+.header {
+    top: 0;
+    width: 100%;
+    background-color: #61dafb;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    height: 80px;
+}
+.center {
+    align-items: center;
+    justify-items: center;
+    width: 100px;
+}
+.footer {
+    height: 80px;
+    margin-top: auto;
+    background-color: coral;
+}
