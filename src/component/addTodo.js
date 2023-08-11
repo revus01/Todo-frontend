@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import { Fab, TextField } from "@mui/material";
+import { Fab, TextField, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import "./addTodo.css"
 import axios from "axios";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.module.css"
 
 
 
-const AddTodo = ({reload}) => {
+const AddTodo = ({reload, setOpen}) => {
 
     const[title, setTitle] = useState('');
     const[startTime, setStartTime] = useState(null);
     const[endTime, setEndTime] = useState(null);
+
 
     const userData = JSON.parse(localStorage.getItem("userData"))
 
@@ -22,18 +22,21 @@ const AddTodo = ({reload}) => {
 
     const addTodo = () => {
 
-        if(title.length !== 0 && startTime !== null && endTime !== null ){
+        if(title.length !== 0 && startTime !== null && endTime !== null &&
+            moment.duration(moment(endTime).diff(moment(startTime))).asHours() < 24){
             axios.post('/todo/add',{
                 id: 0,
                 createdUser: userData.uid,
                 title: title,
                 isComplete: false,
-                startTime: moment(startTime.toString()).format("YYYY-MM-DDThh:mm"),
-                endTime:moment(endTime.toString()).format("YYYY-MM-DDThh:mm")
+                startTime: moment(startTime.toString()).format("YYYY-MM-DDTHH:mm"),
+                endTime:moment(endTime.toString()).format("YYYY-MM-DDTHH:mm")
             }).then(async (response) => {
                 setTitle("")
                 setStartTime(null)
                 setEndTime(null)
+                setOpen(false)
+                alert("새로운 일정이 추가되었습니다")
                 await reload()
             }).catch(error => console.log(error))
         }
@@ -41,25 +44,34 @@ const AddTodo = ({reload}) => {
 
     return(
         <div className="structure">
-            <Fab color="primary" aria-label="add" onClick={addTodo}>
-                <AddIcon />
-            </Fab>
+            <Typography fontSize={24} >일정 추가</Typography>
             <div className="input">
                 <TextField id="outlined-basic" label="해야 할 일" variant="outlined" style={{margin:"10px"}} value = {title} 
                 onChange={(event) => {
                     setTitle(event.target.value);
                     }}/>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <div style={{display:'flex', flex:1, flexDirection:"row", justifyContent:"space-around", height:50}} >
-                        <div style={{flex:2, margin:10, justifyContent:"center", display:"flex"}}>
-                            <DesktopDateTimePicker label="시작 시간" value={startTime}  onChange={(value) => setStartTime(value)}/>
-                            <DesktopDateTimePicker label="종료 시간" value={endTime}  onChange={(value) => setEndTime(value)}/>
-                        </div>
-                        
-                
-                    </div>
-                </LocalizationProvider>
+                    <ReactDatePicker 
+                        selected={startTime}
+                        placeholderText="시작 시간"
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        dateFormat="yyyy MM dd HH:mm"
+                        value={startTime}
+                        onChange={(date) => setStartTime(date)} />
+                    <ReactDatePicker 
+                        selected={endTime}
+                        placeholderText="종료 시간"
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        dateFormat="yyyy MM dd HH:mm"
+                        value={endTime}
+                        onChange={(date) => setEndTime(date)} />
             </div>
+            <Fab color="primary" aria-label="add" onClick={addTodo}>
+                <AddIcon />
+            </Fab>
+            
+
         </div>
     )
 }

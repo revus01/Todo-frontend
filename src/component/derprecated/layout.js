@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ListPage from "../component/listPage";
 import "./layout.css"
-import AddTodo from "../component/addTodo";
-import TodoHead from "../component/TodoHeader";
+import AddTodo from "../addTodo";
+import TodoHead from "./TodoHeader";
+import { useNavigate } from "react-router";
+import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
+import { Link } from "react-router-dom";
 
 
 
@@ -11,10 +14,19 @@ const Layout = () => {
 
     const userData = JSON.parse(localStorage.getItem("userData"))
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        axios.post('/todo/list',userData)
-        .then(response => {setTodoList(response.data); console.log(response)})
-        .catch(error => console.log(userData.uid))
+
+        if(userData === null){
+            navigate("/login")
+        }else{
+            axios.post('/todo/list',userData)
+            .then(response => {setTodoList(response.data); console.log(response)})
+            .catch(error => console.log(userData.uid))
+        }
+
+
     }, []);
 
     const reload = () => {

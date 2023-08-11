@@ -1,12 +1,13 @@
-import React from 'react';
-import Layout from './layout/layout';
+import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
-import { TodoProvider } from './TodoContext';
 import styled from "styled-components"
 import LoginPage from './component/loginPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SignUpPage from './component/signupPage';
-import PrivateSchedule from './component/privateSchedule';
+import UserSchedulePage from './component/schedule/userSchedulePage';
+import SideNavigation from './component/sideNavigation';
+import GroupPage from './group/groupPage';
+
 
 const GlobalStyle = createGlobalStyle`
     body{
@@ -32,24 +33,30 @@ const TodoTemplateBlock = styled.div`
 
 function App() {
 
+    const[isLogin, setIsLogin] = useState(false);
+
+    useEffect(()=>{
+        if(localStorage.getItem("userData") !== null){
+            setIsLogin(true)
+          }
+    })
 
 
 
     return (
-        <TodoProvider>
-            <GlobalStyle />
+        <div style={{ display: "flex", height: "100vh" }}>
             <BrowserRouter>
+            <SideNavigation isLogin={isLogin} setIsLogin={setIsLogin}/>
             <Routes>
-                <Route path={"/login"} element={<LoginPage />}></Route>
+                <Route path={"/login"} element={<LoginPage setIsLogin={setIsLogin} />}></Route>
                 <Route path={"/signup"} element={<SignUpPage />}></Route>
-                <Route path={'/user/todolist'} element={<TodoTemplateBlock><Layout/></TodoTemplateBlock> }></Route>
-                <Route path={'/user/schedule'} element={<PrivateSchedule />}></Route>
+                {/* <Route path={'/user/todolist'} element={<TodoTemplateBlock><Layout/></TodoTemplateBlock> }></Route> */}
+                <Route path={'/user/schedule'} element={<UserSchedulePage />}></Route>
+                <Route path={'/group/schedule'} element = {<GroupPage />}></Route>
 
             </Routes>
             </BrowserRouter>
-            
-          
-        </TodoProvider>
+        </div>
     );
 }
 

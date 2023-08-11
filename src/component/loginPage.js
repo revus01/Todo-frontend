@@ -13,9 +13,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router';
 
 
+
 const defaultTheme = createTheme();
 
-export default function LoginPage() {
+export default function LoginPage({setIsLogin}) {
 
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ export default function LoginPage() {
     }
   })
 
-  
+
   
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -34,7 +35,8 @@ export default function LoginPage() {
       email: data.get('email'),
       password: data.get('password')
       })
-      .then(response => {alert("로그인 성공!"); localStorage.setItem("userData", JSON.stringify(response.data));})
+      .then(response => {alert("로그인 성공!"); localStorage.setItem("userData", JSON.stringify(response.data)); navigate("/user/schedule");
+      setIsLogin(true)})
       .catch(error => {alert("이메일 혹은 비밀번호가 맞지 않습니다. 다시 로그인을 시도해주세요.")})
 
   };

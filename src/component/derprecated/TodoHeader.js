@@ -42,6 +42,8 @@ function TodoHead() {
       <h1>Todo 리스트</h1>  
       <h2>{dateString}</h2>
       <div className="day">{dayName}</div>
+    
+
     </TodoHeadBlock>
   );
 }
